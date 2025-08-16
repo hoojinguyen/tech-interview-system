@@ -16,6 +16,7 @@
     "db:seed": "bun run src/db/seed.ts"
   },
   "dependencies": {
+    "@tech-interview-platform/shared-types": "*",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.44.4",

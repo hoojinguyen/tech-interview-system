@@ -2,9 +2,7 @@ import {
   Question, 
   Roadmap, 
   Role, 
-  MockInterview, 
-  InterviewQuestion,
-  RoleWithRoadmaps,
+  MockInterview,
   RoadmapWithTopics,
   QuestionWithDetails,
   MockInterviewWithDetails
@@ -12,11 +10,9 @@ import {
 import { 
   Difficulty, 
   QuestionType, 
-  Level, 
-  InterviewStatus,
+  Level,
   PaginatedResponse,
   QuestionFilters,
-  RoadmapFilters,
   ApiResponse
 } from './common';
 
@@ -146,6 +142,68 @@ export interface ApproveQuestionRequest {
 
 export interface ApproveQuestionResponse extends ApiResponse<Question> {}
 
+export interface UpdateQuestionRequest {
+  id: string;
+  title?: string;
+  content?: string;
+  type?: QuestionType;
+  difficulty?: Difficulty;
+  technologies?: string[];
+  roles?: string[];
+  companies?: string[];
+  tags?: string[];
+  solution?: {
+    explanation: string;
+    codeExamples: Array<{
+      language: string;
+      code: string;
+      explanation?: string;
+    }>;
+    timeComplexity: string;
+    spaceComplexity: string;
+    alternativeApproaches: string[];
+  };
+}
+
+export interface UpdateQuestionResponse extends ApiResponse<Question> {}
+
+export interface DeleteQuestionRequest {
+  id: string;
+}
+
+export interface DeleteQuestionResponse extends ApiResponse<{ deleted: boolean }> {}
+
+export interface CreateRoadmapRequest {
+  roleId: string;
+  level: Level;
+  title: string;
+  description?: string;
+  estimatedHours: number;
+  prerequisites?: string[];
+  topics: Array<{
+    title: string;
+    description?: string;
+    order: number;
+    resources: Array<{
+      title: string;
+      url: string;
+      type: 'article' | 'video' | 'tutorial' | 'documentation';
+    }>;
+  }>;
+}
+
+export interface CreateRoadmapResponse extends ApiResponse<Roadmap> {}
+
+export interface UpdateRoadmapRequest {
+  id: string;
+  title?: string;
+  description?: string;
+  estimatedHours?: number;
+  prerequisites?: string[];
+}
+
+export interface UpdateRoadmapResponse extends ApiResponse<Roadmap> {}
+
 export interface GetPlatformStatsResponse extends ApiResponse<{
   totalQuestions: number;
   totalRoadmaps: number;
@@ -157,8 +215,76 @@ export interface GetPlatformStatsResponse extends ApiResponse<{
     count: number;
   }>;
   recentActivity: Array<{
-    type: 'question_added' | 'question_approved' | 'mock_interview_completed';
+    type: 'question_added' | 'question_approved' | 'mock_interview_completed' | 'roadmap_created';
     timestamp: Date;
     details: string;
   }>;
+}> {}
+
+// Health check and system status
+export interface HealthCheckResponse extends ApiResponse<{
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  timestamp: Date;
+  services: {
+    database: 'up' | 'down';
+    redis: 'up' | 'down';
+    ai: 'up' | 'down';
+    codingPlatform: 'up' | 'down';
+  };
+  version: string;
+}> {}
+
+// Search and autocomplete
+export interface AutocompleteRequest {
+  query: string;
+  type: 'technologies' | 'companies' | 'roles' | 'tags';
+  limit?: number;
+}
+
+export interface AutocompleteResponse extends ApiResponse<string[]> {}
+
+// Bulk operations
+export interface BulkApproveQuestionsRequest {
+  questionIds: string[];
+  approved: boolean;
+  feedback?: string;
+}
+
+export interface BulkApproveQuestionsResponse extends ApiResponse<{
+  processed: number;
+  successful: number;
+  failed: Array<{
+    questionId: string;
+    error: string;
+  }>;
+}> {}
+
+// Analytics and reporting
+export interface GetAnalyticsRequest {
+  startDate?: Date;
+  endDate?: Date;
+  metrics?: Array<'questions' | 'interviews' | 'users' | 'ratings'>;
+}
+
+export interface GetAnalyticsResponse extends ApiResponse<{
+  period: {
+    startDate: Date;
+    endDate: Date;
+  };
+  metrics: {
+    questionsAdded: number;
+    questionsApproved: number;
+    interviewsCompleted: number;
+    averageInterviewScore: number;
+    topTechnologies: Array<{
+      name: string;
+      count: number;
+      trend: 'up' | 'down' | 'stable';
+    }>;
+    userEngagement: {
+      dailyActiveUsers: number;
+      averageSessionDuration: number;
+      completionRate: number;
+    };
+  };
 }> {}
