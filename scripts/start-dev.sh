@@ -69,16 +69,24 @@ cleanup() {
     
     # Kill background processes
     if [ ! -z "$BACKEND_PID" ]; then
+        print_status "Stopping Backend API..."
         kill $BACKEND_PID 2>/dev/null || true
     fi
     
     if [ ! -z "$CLIENT_PID" ]; then
+        print_status "Stopping Client App..."
         kill $CLIENT_PID 2>/dev/null || true
     fi
     
     if [ ! -z "$ADMIN_PID" ]; then
+        print_status "Stopping Admin App..."
         kill $ADMIN_PID 2>/dev/null || true
     fi
+    
+    # Kill any remaining Next.js processes
+    print_status "Cleaning up any remaining processes..."
+    pkill -f "next dev" 2>/dev/null || true
+    pkill -f "bun.*src/index.ts" 2>/dev/null || true
     
     # Stop Docker services
     print_status "Stopping Docker services..."
@@ -175,36 +183,46 @@ cd ..
 wait_for_service "Backend API" "http://localhost:3002/health"
 
 # Start Client App
-if [ -d "client" ]; then
+if [ -d "apps/client" ]; then
     print_status "Starting Client App (Port 3000)..."
-    cd client
-    npm run dev > ../logs/client.log 2>&1 &
-    CLIENT_PID=$!
-    cd ..
+    if command -v yarn >/dev/null 2>&1; then
+        yarn workspace client dev > logs/client.log 2>&1 &
+        CLIENT_PID=$!
+    else
+        cd apps/client
+        npm run dev > ../../logs/client.log 2>&1 &
+        CLIENT_PID=$!
+        cd ../..
+    fi
     
     # Wait for client to be ready
-    sleep 3
+    sleep 5
     if port_in_use 3000; then
         print_success "Client app is starting on http://localhost:3000"
     else
-        print_warning "Client app may have failed to start"
+        print_warning "Client app may have failed to start - check logs/client.log"
     fi
 fi
 
 # Start Admin App
-if [ -d "admin" ]; then
+if [ -d "apps/admin" ]; then
     print_status "Starting Admin App (Port 3001)..."
-    cd admin
-    npm run dev > ../logs/admin.log 2>&1 &
-    ADMIN_PID=$!
-    cd ..
+    if command -v yarn >/dev/null 2>&1; then
+        yarn workspace admin dev > logs/admin.log 2>&1 &
+        ADMIN_PID=$!
+    else
+        cd apps/admin
+        npm run dev > ../../logs/admin.log 2>&1 &
+        ADMIN_PID=$!
+        cd ../..
+    fi
     
     # Wait for admin to be ready
-    sleep 3
+    sleep 5
     if port_in_use 3001; then
         print_success "Admin app is starting on http://localhost:3001"
     else
-        print_warning "Admin app may have failed to start"
+        print_warning "Admin app may have failed to start - check logs/admin.log"
     fi
 fi
 
