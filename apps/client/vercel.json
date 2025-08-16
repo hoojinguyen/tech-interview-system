@@ -1,0 +1,21 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api-url",
+    "NEXT_PUBLIC_APP_ENV": "@app-env"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "@api-url",
+      "NEXT_PUBLIC_APP_ENV": "@app-env"
+    }
+  },
+  "functions": {
+    "app/**": {
+      "maxDuration": 30
+    }
+  }
+}

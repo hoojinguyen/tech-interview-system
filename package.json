@@ -25,7 +25,16 @@
     "type-check": "npm run type-check:client && npm run type-check:admin && npm run type-check:backend",
     "type-check:client": "cd apps/client && npm run type-check",
     "type-check:admin": "cd apps/admin && npm run type-check",
-    "type-check:backend": "cd backend && bun run type-check"
+    "type-check:backend": "cd backend && bun run type-check",
+    "setup:dev": "./scripts/setup-dev.sh",
+    "deploy:prod": "./scripts/deploy-prod.sh",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "db:migrate": "cd backend && bun run db:migrate",
+    "db:seed": "cd backend && bun run db:seed",
+    "test": "npm run test:backend",
+    "test:backend": "cd backend && bun test"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
