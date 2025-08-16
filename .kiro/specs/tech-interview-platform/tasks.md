@@ -25,7 +25,7 @@
 
 ## Core Data Models and Database Schema
 
-- [ ] 4. Implement database schema and core models
+- [x] 4. Implement database schema and core models
   - Define Drizzle schema for roles, roadmaps, questions, and topics
   - Create database migration files
   - Implement seed data for initial roles and sample content
