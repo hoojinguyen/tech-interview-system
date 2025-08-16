@@ -1,92 +1,68 @@
 #!/bin/bash
 
-# Tech Interview Platform - Development Setup Script
-
+# Development Environment Setup Script
 set -e
 
-echo "🚀 Setting up Tech Interview Platform for development..."
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
 
-# Check if required tools are installed
-check_tool() {
-    if ! command -v $1 &> /dev/null; then
-        echo "❌ $1 is not installed. Please install it first."
-        exit 1
-    fi
+print_status() {
+    echo -e "${BLUE}[SETUP]${NC} $1"
 }
 
-echo "📋 Checking required tools..."
-check_tool "node"
-check_tool "npm"
-check_tool "bun"
-check_tool "docker"
-check_tool "docker-compose"
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
 
-# Install root dependencies
-echo "📦 Installing root dependencies..."
-npm install
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
 
-# Setup client app
-echo "🖥️ Setting up client app..."
-cd apps/client
-if [ ! -f .env.local ]; then
-    cp .env.example .env.local
-    echo "✅ Created client .env.local from example"
+print_status "🔧 Setting up Tech Interview Platform development environment..."
+
+# Create necessary directories
+print_status "Creating directories..."
+mkdir -p logs
+mkdir -p scripts
+
+# Make scripts executable
+print_status "Making scripts executable..."
+chmod +x scripts/*.sh
+
+# Create environment files if they don't exist
+print_status "Setting up environment files..."
+
+if [ ! -f "backend/.env" ]; then
+    print_status "Creating backend .env file..."
+    cp backend/.env.example backend/.env
+    print_warning "Please update backend/.env with your configuration"
 fi
-npm install
-cd ../..
 
-# Setup admin app
-echo "👨‍💼 Setting up admin app..."
-cd apps/admin
-if [ ! -f .env.local ]; then
-    cp .env.example .env.local
-    echo "✅ Created admin .env.local from example"
+# Install dependencies
+print_status "Installing dependencies..."
+cd backend && bun install && cd ..
+
+if [ -d "client" ]; then
+    cd client && npm install && cd ..
 fi
-npm install
-cd ../..
 
-# Setup backend
-echo "⚙️ Setting up backend..."
-cd backend
-if [ ! -f .env ]; then
-    cp .env.example .env
-    echo "✅ Created backend .env from example"
+if [ -d "admin" ]; then
+    cd admin && npm install && cd ..
 fi
-bun install
-cd ..
 
-# Setup shared packages
-echo "📚 Setting up shared packages..."
-cd packages/shared-types
-npm install
-npm run build
-cd ../..
+# Pull Docker images
+print_status "Pulling Docker images..."
+docker compose pull
 
-# Start infrastructure services
-echo "🐳 Starting infrastructure services (PostgreSQL & Redis)..."
-docker-compose up -d postgres redis
-
-# Wait for services to be ready
-echo "⏳ Waiting for services to be ready..."
-sleep 10
-
-# Run database migrations
-echo "🗄️ Running database migrations..."
-cd backend
-bun run db:migrate
-bun run db:seed
-cd ..
-
-echo "✅ Development environment setup complete!"
+print_success "✅ Development environment setup completed!"
 echo ""
-echo "🎯 Next steps:"
-echo "1. Start the backend: cd backend && bun run dev"
-echo "2. Start the client: cd apps/client && npm run dev"
-echo "3. Start the admin: cd apps/admin && npm run dev"
+echo "🚀 Quick start commands:"
+echo "  make start       - Start full development environment"
+echo "  make quick       - Quick start (backend only)"
+echo "  npm run start    - Start full development environment"
+echo "  ./scripts/start-dev.sh - Start with detailed logging"
 echo ""
-echo "🌐 URLs:"
-echo "- Client: http://localhost:3000"
-echo "- Admin: http://localhost:3002"
-echo "- Backend API: http://localhost:3001"
-echo "- Database: postgresql://tech_user:tech_password@localhost:5432/tech_interview_platform"
-echo "- Redis: redis://localhost:6379"
+echo "📖 Run 'make help' for all available commands"

@@ -9,7 +9,10 @@
     "packages/*"
   ],
   "scripts": {
+    "start": "./scripts/start-dev.sh",
+    "start:quick": "./scripts/quick-start.sh",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:admin\" \"npm run dev:backend\"",
+    "dev:backend-only": "npm run docker:up && cd backend && bun run dev",
     "dev:client": "cd apps/client && npm run dev",
     "dev:admin": "cd apps/admin && npm run dev",
     "dev:backend": "cd backend && bun run dev",
