@@ -1,8 +1,17 @@
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import { logger } from 'hono/logger'
 import { checkDatabaseConnection, closeDatabaseConnection } from './db/connection'
 import { cacheService } from './db/redis'
+import { 
+  corsMiddleware, 
+  securityHeaders, 
+  removeServerHeader,
+  rateLimit,
+  rateLimitConfigs,
+  errorHandler,
+  requestLogger
+} from './middleware'
+import { health } from './routes/health'
+import { status } from './routes/status'
 
 const app = new Hono()
 
@@ -27,62 +36,77 @@ async function initializeServices() {
   }
 }
 
-// Middleware
-app.use('*', logger())
-app.use('*', cors({
-  origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-}))
+// Global middleware (order matters!)
+app.use('*', removeServerHeader())
+app.use('*', securityHeaders())
+app.use('*', corsMiddleware())
+app.use('*', requestLogger())
 
-// Health check endpoint with database and Redis status
-app.get('/health', async (c) => {
-  const dbStatus = await checkDatabaseConnection()
-  const redisStatus = await cacheService.ping()
-  
-  return c.json({ 
-    success: true, 
-    message: 'Tech Interview Platform API is running',
-    timestamp: new Date().toISOString(),
-    services: {
-      database: dbStatus ? 'connected' : 'disconnected',
-      redis: redisStatus ? 'connected' : 'disconnected'
-    }
-  })
-})
+// Rate limiting middleware
+app.use('/api/*', rateLimit(rateLimitConfigs.general))
 
-// API routes
-app.get('/api/v1/status', (c) => {
+// Error handling
+app.onError(errorHandler)
+
+// Health and status routes
+app.route('/health', health)
+app.route('/api/v1/status', status)
+
+// 404 handler for unmatched routes
+app.notFound((c) => {
   return c.json({
-    success: true,
-    data: {
-      service: 'Tech Interview Platform API',
-      version: '1.0.0',
-      environment: process.env.NODE_ENV || 'development'
+    success: false,
+    error: {
+      code: 'NOT_FOUND',
+      message: 'The requested endpoint was not found',
+      timestamp: new Date().toISOString()
     }
-  })
+  }, 404)
 })
 
 // Graceful shutdown handling
-process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down gracefully...')
-  await cacheService.disconnect()
-  await closeDatabaseConnection()
-  process.exit(0)
+const gracefulShutdown = async (signal: string) => {
+  console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`)
+  
+  try {
+    await cacheService.disconnect()
+    console.log('✅ Redis disconnected')
+    
+    await closeDatabaseConnection()
+    console.log('✅ Database disconnected')
+    
+    console.log('✅ Graceful shutdown completed')
+    process.exit(0)
+  } catch (error) {
+    console.error('❌ Error during shutdown:', error)
+    process.exit(1)
+  }
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'))
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error)
+  process.exit(1)
 })
 
-process.on('SIGTERM', async () => {
-  console.log('\n🛑 Shutting down gracefully...')
-  await cacheService.disconnect()
-  await closeDatabaseConnection()
-  process.exit(0)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason)
+  process.exit(1)
 })
 
 const port = process.env.PORT || 3002
 
 // Initialize services and start server
 initializeServices().then(() => {
-  console.log(`🚀 Server running on port ${port}`)
+  console.log(`🚀 Tech Interview Platform API`)
+  console.log(`📡 Server running on port ${port}`)
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`)
+  console.log(`⚡ Powered by Bun.js + Hono`)
+  console.log(`📊 Health check: http://localhost:${port}/health`)
+  console.log(`📋 API status: http://localhost:${port}/api/v1/status`)
 }).catch((error) => {
   console.error('❌ Failed to start server:', error)
   process.exit(1)

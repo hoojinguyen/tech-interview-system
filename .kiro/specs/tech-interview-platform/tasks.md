@@ -41,7 +41,7 @@
 
 ## Backend API Development
 
-- [ ] 6. Set up Hono.js API server with core middleware
+- [x] 6. Set up Hono.js API server with core middleware
   - Initialize Hono application with TypeScript
   - Configure CORS, security headers, and rate limiting
   - Set up request logging and error handling middleware
