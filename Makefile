@@ -23,6 +23,12 @@ help:
 	@echo "  make test        - Run tests"
 	@echo "  make lint        - Run linting"
 	@echo ""
+	@echo "🧶 Yarn Commands:"
+	@echo "  yarn install              - Install dependencies"
+	@echo "  yarn workspace client dev - Run client app"
+	@echo "  yarn workspace admin dev  - Run admin app"
+	@echo "  yarn workspaces run build - Build all packages"
+	@echo ""
 	@echo "🐳 Docker:"
 	@echo "  make docker-up   - Start Docker services only"
 	@echo "  make docker-down - Stop Docker services"
@@ -85,9 +91,15 @@ health:
 # Install dependencies
 install:
 	@echo "📦 Installing dependencies..."
-	@cd backend && bun install
-	@if [ -d "client" ]; then cd client && npm install; fi
-	@if [ -d "admin" ]; then cd admin && npm install; fi
+	@if command -v yarn >/dev/null 2>&1; then \
+		echo "Using Yarn (faster)..."; \
+		yarn install; \
+	else \
+		echo "Using npm (fallback)..."; \
+		cd backend && bun install; \
+		if [ -d "apps/client" ]; then cd apps/client && npm install; fi; \
+		if [ -d "apps/admin" ]; then cd apps/admin && npm install; fi; \
+	fi
 	@echo "✅ Dependencies installed"
 
 # Clean up
@@ -105,7 +117,11 @@ test:
 # Run linting
 lint:
 	@echo "🔍 Running linting..."
-	@npm run lint
+	@if command -v yarn >/dev/null 2>&1; then \
+		yarn run lint; \
+	else \
+		npm run lint; \
+	fi
 
 # Docker commands
 docker-up:

@@ -146,19 +146,22 @@ fi
 # Install dependencies if needed
 print_status "Installing dependencies..."
 
-if [ ! -d "backend/node_modules" ]; then
-    print_status "Installing backend dependencies..."
-    cd backend && bun install && cd ..
-fi
-
-if [ ! -d "client/node_modules" ]; then
-    print_status "Installing client dependencies..."
-    cd client && npm install && cd ..
-fi
-
-if [ ! -d "admin/node_modules" ]; then
-    print_status "Installing admin dependencies..."
-    cd admin && npm install && cd ..
+if [ ! -d "node_modules" ]; then
+    print_status "Installing all dependencies with Yarn..."
+    if command -v yarn >/dev/null 2>&1; then
+        yarn install
+    else
+        print_warning "Yarn not found, falling back to npm..."
+        if [ ! -d "backend/node_modules" ]; then
+            cd backend && bun install && cd ..
+        fi
+        if [ ! -d "apps/client/node_modules" ]; then
+            cd apps/client && npm install && cd ..
+        fi
+        if [ ! -d "apps/admin/node_modules" ]; then
+            cd apps/admin && npm install && cd ..
+        fi
+    fi
 fi
 
 # Start Backend API
