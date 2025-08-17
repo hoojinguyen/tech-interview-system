@@ -62,7 +62,7 @@
   - Create GET /api/v1/questions/:id endpoint for individual questions
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 9. Develop mock interview API endpoints
+- [x] 9. Develop mock interview API endpoints
   - Create POST /api/v1/mock-interviews/start endpoint to initialize sessions
   - Implement POST /api/v1/mock-interviews/:id/submit for answer submission
   - Create GET /api/v1/mock-interviews/:id/feedback for AI-powered feedback

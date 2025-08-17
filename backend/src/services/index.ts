@@ -13,3 +13,14 @@ export type {
   QuestionDetail,
   QuestionSearchResult
 } from './QuestionService';
+
+export { mockInterviewService, MockInterviewService } from './MockInterviewService';
+export type {
+  StartMockInterviewRequest,
+  MockInterviewSession,
+  MockInterviewWithDetails,
+  InterviewFeedback,
+  SubmitAnswerRequest,
+  SubmitAnswerResponse,
+  MockInterviewSummary
+} from './MockInterviewService';

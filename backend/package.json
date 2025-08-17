@@ -16,6 +16,7 @@
     "db:seed": "bun run src/db/seed.ts"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.2",
     "@tech-interview-platform/shared-types": "*",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

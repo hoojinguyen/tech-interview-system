@@ -222,6 +222,7 @@ export const CacheKeys = {
 
   // Mock interviews
   mockInterviewById: (id: string) => `mock-interview:${id}`,
+  mockInterviewWithDetails: (id: string) => `mock-interview:details:${id}`,
 
   // User sessions (if needed)
   userSession: (sessionId: string) => `session:${sessionId}`,
