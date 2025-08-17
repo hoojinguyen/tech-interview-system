@@ -24,3 +24,10 @@ export type {
   SubmitAnswerResponse,
   MockInterviewSummary
 } from './MockInterviewService';
+
+export { adminService } from './AdminService';
+export type {
+  ContentOverview,
+  PlatformAnalytics,
+  QuestionUpdateData
+} from './AdminService';

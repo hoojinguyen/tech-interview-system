@@ -15,6 +15,7 @@ import { status } from './routes/status'
 import { roadmaps } from './routes/roadmaps'
 import { questions } from './routes/questions'
 import { mockInterviews } from './routes/mock-interviews'
+import { admin } from './routes/admin'
 
 const app = new Hono()
 
@@ -64,6 +65,7 @@ app.route('/api/v1/status', status)
 app.route('/api/v1/roadmaps', roadmaps)
 app.route('/api/v1/questions', questions)
 app.route('/api/v1/mock-interviews', mockInterviews)
+app.route('/api/v1/admin', admin)
 
 // 404 handler for unmatched routes
 app.notFound((c) => {

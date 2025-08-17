@@ -229,4 +229,10 @@ export const CacheKeys = {
 
   // Rate limiting
   rateLimit: (ip: string, endpoint: string) => `rate-limit:${ip}:${endpoint}`,
+
+  // Admin
+  admin: {
+    contentOverview: () => 'admin:content-overview',
+    analytics: () => 'admin:analytics',
+  },
 } as const;
