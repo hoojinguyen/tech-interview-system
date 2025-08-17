@@ -5,17 +5,16 @@ import { ArrowLeft, Clock, Users, BookOpen, Target } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import { TECH_ROLES, DIFFICULTY_LABELS, DIFFICULTY_COLORS } from '@/lib/constants/roles'
 
 interface RolePageProps {
   params: {
-    roleId: string
+    role: string
   }
 }
 
 export async function generateMetadata({ params }: RolePageProps): Promise<Metadata> {
-  const role = TECH_ROLES.find(r => r.id === params.roleId)
+  const role = TECH_ROLES.find(r => r.id === params.role)
   
   if (!role) {
     return {
@@ -31,12 +30,12 @@ export async function generateMetadata({ params }: RolePageProps): Promise<Metad
 
 export async function generateStaticParams() {
   return TECH_ROLES.map((role) => ({
-    roleId: role.id,
+    role: role.id,
   }))
 }
 
 export default function RolePage({ params }: RolePageProps) {
-  const role = TECH_ROLES.find(r => r.id === params.roleId)
+  const role = TECH_ROLES.find(r => r.id === params.role)
 
   if (!role) {
     notFound()
@@ -87,7 +86,7 @@ export default function RolePage({ params }: RolePageProps) {
         </div>
 
         {/* Technologies */}
-        <div className="mb-6">
+        <div className="mb-8">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">Key Technologies</h3>
           <div className="flex flex-wrap gap-2">
             {role.technologies.map((tech) => (
@@ -98,12 +97,85 @@ export default function RolePage({ params }: RolePageProps) {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Choose Your Level */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Choose Your Experience Level</h2>
+          <p className="text-muted-foreground mb-6">
+            Select the roadmap that matches your current experience level to get the most relevant preparation materials.
+          </p>
+        </div>
+
+        {/* Level Selection */}
+        <div className="grid gap-4 md:grid-cols-3 mb-8">
+          <Link href={`/roadmaps/${role.id}/junior`}>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                    <span className="text-sm font-bold text-green-600">J</span>
+                  </div>
+                  Junior Level
+                </CardTitle>
+                <CardDescription>
+                  Perfect for entry-level positions and new graduates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>~20 hours</span>
+                  <span>Beginner friendly</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href={`/roadmaps/${role.id}/mid`}>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                    <span className="text-sm font-bold text-yellow-600">M</span>
+                  </div>
+                  Mid Level
+                </CardTitle>
+                <CardDescription>
+                  For developers with 2-5 years of experience
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>~35 hours</span>
+                  <span>Intermediate</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href={`/roadmaps/${role.id}/senior`}>
+            <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                    <span className="text-sm font-bold text-red-600">S</span>
+                  </div>
+                  Senior Level
+                </CardTitle>
+                <CardDescription>
+                  Advanced topics for senior and lead positions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>~50 hours</span>
+                  <span>Advanced</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        {/* Quick Actions */}
         <div className="flex gap-4">
-          <Button size="lg">
-            <BookOpen className="mr-2 h-4 w-4" />
-            Start Learning Path
-          </Button>
           <Button variant="outline" size="lg" asChild>
             <Link href={`/questions?role=${role.id}`}>
               <Target className="mr-2 h-4 w-4" />
@@ -118,55 +190,44 @@ export default function RolePage({ params }: RolePageProps) {
         </div>
       </div>
 
-      {/* Roadmap Preview */}
+      {/* Role Overview */}
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Learning Roadmap</CardTitle>
+            <CardTitle>What You&apos;ll Learn</CardTitle>
             <CardDescription>
-              Structured learning path with estimated completion time
+              Key skills and concepts covered in this roadmap
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Overall Progress</span>
-                <span className="text-sm text-muted-foreground">0%</span>
+              <div className="flex items-center space-x-3 p-3 rounded-lg border">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-sm font-medium">1</span>
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium">Fundamentals</div>
+                  <div className="text-sm text-muted-foreground">Core concepts and basics</div>
+                </div>
               </div>
-              <Progress value={0} className="h-2" />
               
-              <div className="space-y-3 mt-6">
-                <div className="flex items-center space-x-3 p-3 rounded-lg border">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-sm font-medium">1</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">Fundamentals</div>
-                    <div className="text-sm text-muted-foreground">Core concepts and basics</div>
-                  </div>
-                  <Badge variant="outline">8h</Badge>
+              <div className="flex items-center space-x-3 p-3 rounded-lg border">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-sm font-medium">2</span>
                 </div>
-                
-                <div className="flex items-center space-x-3 p-3 rounded-lg border">
-                  <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                    <span className="text-sm font-medium">2</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">Advanced Topics</div>
-                    <div className="text-sm text-muted-foreground">Deep dive into complex concepts</div>
-                  </div>
-                  <Badge variant="outline">16h</Badge>
+                <div className="flex-1">
+                  <div className="font-medium">Advanced Topics</div>
+                  <div className="text-sm text-muted-foreground">Deep dive into complex concepts</div>
                 </div>
-                
-                <div className="flex items-center space-x-3 p-3 rounded-lg border">
-                  <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                    <span className="text-sm font-medium">3</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">System Design</div>
-                    <div className="text-sm text-muted-foreground">Architecture and scalability</div>
-                  </div>
-                  <Badge variant="outline">16h</Badge>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-3 rounded-lg border">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-sm font-medium">3</span>
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium">System Design</div>
+                  <div className="text-sm text-muted-foreground">Architecture and scalability</div>
                 </div>
               </div>
             </div>
@@ -219,27 +280,6 @@ export default function RolePage({ params }: RolePageProps) {
           </CardContent>
         </Card>
       </div>
-
-      {/* Coming Soon Notice */}
-      <Card className="mt-8 border-dashed">
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">Detailed Roadmap Coming Soon</h3>
-            <p className="text-muted-foreground mb-4">
-              We&apos;re working on creating comprehensive, interactive roadmaps for each role. 
-              In the meantime, you can explore our question bank and start practicing!
-            </p>
-            <div className="flex justify-center gap-4">
-              <Button asChild>
-                <Link href="/questions">Browse Questions</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/mock-interviews">Try Mock Interview</Link>
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

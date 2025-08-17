@@ -96,7 +96,7 @@
   - Implement responsive design for mobile and desktop
   - _Requirements: 1.1, 5.1, 5.3_
 
-- [ ] 12. Develop roadmap viewer and progress tracking
+- [x] 12. Develop roadmap viewer and progress tracking
   - Create roadmap pages with App Router (app/roadmaps/[role]/[level])
   - Implement interactive roadmap timeline visualization with progress indicators
   - Build custom RoadmapTimeline component using Card, Badge, and Progress components

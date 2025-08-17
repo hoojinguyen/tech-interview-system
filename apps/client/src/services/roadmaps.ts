@@ -47,7 +47,20 @@ export function useRoles() {
 export function useRoadmap(role: string, level: string) {
   return useQuery({
     queryKey: ['roadmap', role, level],
-    queryFn: () => roadmapApi.getRoadmap(role, level),
+    queryFn: () => {
+      // Mock roadmap data for now - replace with real API call later
+      return Promise.resolve({
+        id: `${role}-${level}`,
+        roleId: role,
+        level: level as any,
+        title: `${role.replace('-', ' ')} - ${level} Level`,
+        description: `Comprehensive roadmap for ${level} level ${role.replace('-', ' ')} interviews`,
+        estimatedHours: level === 'junior' ? 20 : level === 'mid' ? 35 : 50,
+        prerequisites: level === 'junior' ? [] : level === 'mid' ? ['Basic programming knowledge'] : ['2+ years experience', 'Advanced programming concepts'],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+    },
     enabled: !!role && !!level,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })

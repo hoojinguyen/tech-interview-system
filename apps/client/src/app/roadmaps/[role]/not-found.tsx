@@ -1,15 +1,15 @@
 import Link from 'next/link'
-import { ArrowLeft, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, Search } from 'lucide-react'
 
-export default function NotFound() {
+export default function RoleNotFound() {
   return (
-    <div className="container py-24">
-      <div className="mx-auto max-w-2xl text-center">
+    <div className="container py-12">
+      <div className="max-w-2xl mx-auto text-center">
         <Card>
           <CardHeader>
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-muted flex items-center justify-center">
               <Search className="h-8 w-8 text-muted-foreground" />
             </div>
             <CardTitle className="text-2xl">Role Not Found</CardTitle>
@@ -17,16 +17,21 @@ export default function NotFound() {
               The role you&apos;re looking for doesn&apos;t exist or may have been moved.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              Don&apos;t worry! You can browse all available tech roles and find the perfect roadmap for your career goals.
+            </p>
+            <div className="flex gap-4 justify-center">
               <Button asChild>
                 <Link href="/roadmaps">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Roadmaps
+                  Browse All Roles
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/">Go Home</Link>
+                <Link href="/">
+                  Go Home
+                </Link>
               </Button>
             </div>
           </CardContent>
