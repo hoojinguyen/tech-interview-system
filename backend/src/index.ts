@@ -13,6 +13,7 @@ import {
 import { health } from './routes/health'
 import { status } from './routes/status'
 import { roadmaps } from './routes/roadmaps'
+import { questions } from './routes/questions'
 
 const app = new Hono()
 
@@ -60,6 +61,7 @@ app.route('/api/v1/status', status)
 
 // API routes
 app.route('/api/v1/roadmaps', roadmaps)
+app.route('/api/v1/questions', questions)
 
 // 404 handler for unmatched routes
 app.notFound((c) => {

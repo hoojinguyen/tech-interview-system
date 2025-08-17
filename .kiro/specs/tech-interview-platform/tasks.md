@@ -55,7 +55,7 @@
   - Add caching layer using Redis for frequently accessed roadmaps
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 8. Build question bank API with search and filtering
+- [x] 8. Build question bank API with search and filtering
   - Create GET /api/v1/questions endpoint with query parameters
   - Implement filtering by technology, difficulty, role, and question type
   - Add full-text search functionality for question content
