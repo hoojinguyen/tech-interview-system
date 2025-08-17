@@ -20,7 +20,7 @@ redisClient.on('ready', () => {
   console.log('✅ Redis client ready');
 });
 
-redisClient.on('error', (err) => {
+redisClient.on('error', err => {
   console.error('❌ Redis client error:', err);
 });
 
@@ -44,8 +44,15 @@ export class CacheService {
         await this.client.connect();
       }
     } catch (error) {
-      console.error('Failed to connect to Redis:', error);
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(
+        '⚠️ Redis connection failed, running without cache:',
+        errorMessage
+      );
+      // Don't throw error in development - allow app to run without Redis
+      if (process.env.NODE_ENV === 'production') {
+        throw error;
+      }
     }
   }
 
@@ -63,25 +70,39 @@ export class CacheService {
   // Set a key-value pair with optional TTL
   async set(key: string, value: any, ttl?: number): Promise<void> {
     try {
+      if (!this.client.isOpen) {
+        console.warn(
+          `⚠️ Redis not connected, skipping cache set for key: ${key}`
+        );
+        return;
+      }
       const serializedValue = JSON.stringify(value);
       const expiration = ttl || this.defaultTTL;
       await this.client.setEx(key, expiration, serializedValue);
     } catch (error) {
-      console.error(`Failed to set cache key ${key}:`, error);
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(`⚠️ Failed to set cache key ${key}:`, errorMessage);
+      // Don't throw error - gracefully degrade without cache
     }
   }
 
   // Get a value by key
   async get<T>(key: string): Promise<T | null> {
     try {
+      if (!this.client.isOpen) {
+        console.warn(
+          `⚠️ Redis not connected, skipping cache get for key: ${key}`
+        );
+        return null;
+      }
       const value = await this.client.get(key);
       if (value === null) {
         return null;
       }
       return JSON.parse(value) as T;
     } catch (error) {
-      console.error(`Failed to get cache key ${key}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(`⚠️ Failed to get cache key ${key}:`, errorMessage);
       return null;
     }
   }
@@ -89,23 +110,40 @@ export class CacheService {
   // Delete a key
   async del(key: string): Promise<void> {
     try {
+      if (!this.client.isOpen) {
+        console.warn(
+          `⚠️ Redis not connected, skipping cache delete for key: ${key}`
+        );
+        return;
+      }
       await this.client.del(key);
     } catch (error) {
-      console.error(`Failed to delete cache key ${key}:`, error);
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(`⚠️ Failed to delete cache key ${key}:`, errorMessage);
+      // Don't throw error - gracefully degrade
     }
   }
 
   // Delete multiple keys by pattern
   async delPattern(pattern: string): Promise<void> {
     try {
+      if (!this.client.isOpen) {
+        console.warn(
+          `⚠️ Redis not connected, skipping cache pattern delete: ${pattern}`
+        );
+        return;
+      }
       const keys = await this.client.keys(pattern);
       if (keys.length > 0) {
         await this.client.del(keys);
       }
     } catch (error) {
-      console.error(`Failed to delete cache keys with pattern ${pattern}:`, error);
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(
+        `⚠️ Failed to delete cache keys with pattern ${pattern}:`,
+        errorMessage
+      );
+      // Don't throw error - gracefully degrade
     }
   }
 
@@ -171,7 +209,7 @@ export const CacheKeys = {
   roadmapsByRole: (role: string, level: string) => `roadmaps:${role}:${level}`,
   roadmapById: (id: string) => `roadmap:${id}`,
   allRoles: () => 'roles:all',
-  
+
   // Questions
   questionById: (id: string) => `question:${id}`,
   questionsByFilter: (filters: Record<string, any>) => {
@@ -181,13 +219,13 @@ export const CacheKeys = {
       .join('|');
     return `questions:filter:${filterString}`;
   },
-  
+
   // Mock interviews
   mockInterviewById: (id: string) => `mock-interview:${id}`,
-  
+
   // User sessions (if needed)
   userSession: (sessionId: string) => `session:${sessionId}`,
-  
+
   // Rate limiting
   rateLimit: (ip: string, endpoint: string) => `rate-limit:${ip}:${endpoint}`,
 } as const;

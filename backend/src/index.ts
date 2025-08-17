@@ -12,15 +12,21 @@ import {
 } from './middleware'
 import { health } from './routes/health'
 import { status } from './routes/status'
+import { roadmaps } from './routes/roadmaps'
 
 const app = new Hono()
 
 // Initialize services
 async function initializeServices() {
   try {
-    // Connect to Redis
+    // Connect to Redis (non-blocking in development)
     await cacheService.connect()
-    console.log('✅ Redis connected successfully')
+    const isRedisConnected = await cacheService.ping()
+    if (isRedisConnected) {
+      console.log('✅ Redis connected successfully')
+    } else {
+      console.log('⚠️ Running without Redis cache')
+    }
     
     // Check database connection
     const dbConnected = await checkDatabaseConnection()
@@ -51,6 +57,9 @@ app.onError(errorHandler)
 // Health and status routes
 app.route('/health', health)
 app.route('/api/v1/status', status)
+
+// API routes
+app.route('/api/v1/roadmaps', roadmaps)
 
 // 404 handler for unmatched routes
 app.notFound((c) => {

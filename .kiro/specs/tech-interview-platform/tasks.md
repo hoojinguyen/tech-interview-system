@@ -48,7 +48,7 @@
   - Implement health check and status endpoints
   - _Requirements: 6.1, 6.2, 6.5_
 
-- [ ] 7. Implement roles and roadmaps API endpoints
+- [x] 7. Implement roles and roadmaps API endpoints
   - Create GET /api/v1/roadmaps/roles endpoint to list available roles
   - Create GET /api/v1/roadmaps/:role/:level endpoint for specific roadmaps
   - Implement roadmap data retrieval with topic relationships
