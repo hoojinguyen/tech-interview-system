@@ -18,7 +18,7 @@ graph TB
         C[Shared UI Components]
         D[State Management]
     end
-    
+
     subgraph "Application Tier"
         E[Bun.js + Hono API]
         F[Authentication Service]
@@ -26,19 +26,19 @@ graph TB
         H[Content Management Service]
         I[AI Integration Service]
     end
-    
+
     subgraph "Data Tier"
         J[PostgreSQL Database]
         K[Redis Cache]
         L[File Storage]
     end
-    
+
     subgraph "External Services"
         M[CodeInterview/CoderPad API]
         N[ChatGPT API]
         O[GitHub Repositories]
     end
-    
+
     A --> E
     B --> E
     E --> J
@@ -53,6 +53,7 @@ graph TB
 ### Technology Stack
 
 **Frontend (Client & Admin):**
+
 - Next.js 14 with App Router for SSR/SSG capabilities
 - TypeScript for type safety and better developer experience
 - Tailwind CSS for utility-first styling and responsive design
@@ -62,6 +63,7 @@ graph TB
 - Atomic Design pattern for component organization
 
 **Backend:**
+
 - Bun.js runtime with Hono framework for high performance
 - TypeScript for type safety across the stack
 - JWT for stateless authentication (admin only)
@@ -69,11 +71,13 @@ graph TB
 - Drizzle ORM for type-safe database operations
 
 **Database:**
+
 - PostgreSQL as primary database for structured data
 - Redis for caching frequently accessed content
 - Database migrations with Drizzle Kit
 
 **Infrastructure:**
+
 - Frontend: Vercel deployment with automatic CI/CD
 - Backend: Docker containers deployable to any cloud provider
 - GitHub Actions for CI/CD pipeline integration
@@ -83,6 +87,7 @@ graph TB
 ### Frontend Architecture
 
 #### Project Structure (Based on React App Structure)
+
 ```
 apps/
 ├── client/                    # Next.js Client Application
@@ -132,18 +137,21 @@ apps/
 #### Core UI Components
 
 **Client Application:**
+
 - **Header/Navigation**: Main navigation with role selection and search
 - **RoadmapViewer**: Interactive timeline visualization for learning paths
 - **QuestionBank**: Searchable, filterable question interface
 - **MockInterview**: Integrated coding environment with timer and feedback
 
 **Admin Application:**
+
 - **AdminDashboard**: Overview of platform metrics and content
 - **ContentManager**: Interface for managing questions and roadmaps
 - **UserManager**: User activity and contribution management
 - **AnalyticsDashboard**: Platform usage and performance metrics
 
 #### State Management
+
 - **Client App**: Zustand for global state (user preferences, progress tracking)
 - **Admin App**: Zustand for admin state (content management, user sessions)
 - **Server State**: React Query for API data caching and synchronization
@@ -154,6 +162,7 @@ apps/
 ### Recommended UI Library: Shadcn/ui + Radix UI
 
 **Why Shadcn/ui?**
+
 - Copy-paste components (not a dependency) - perfect for customization
 - Built on Radix UI primitives for accessibility
 - Tailwind CSS integration
@@ -164,6 +173,7 @@ apps/
 ### Client Application UI Design
 
 #### Home Page Layout
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Header: Logo | Roadmaps | Questions | Mock Interviews | 🔍  │
@@ -186,6 +196,7 @@ apps/
 ```
 
 #### Roadmap Viewer Page
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Header + Breadcrumb: Home > Roadmaps > Senior Frontend     │
@@ -218,6 +229,7 @@ apps/
 ```
 
 #### Question Bank Page
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Header + Search: [🔍 Search questions...              ] 🔍 │
@@ -250,6 +262,7 @@ apps/
 ```
 
 #### Mock Interview Interface
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🎤 Mock Interview - Senior Frontend Developer              │
@@ -288,6 +301,7 @@ apps/
 ### Admin Application UI Design
 
 #### Admin Dashboard
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🔧 Admin Panel | Welcome, Admin | [👤 Profile] [🚪 Logout] │
@@ -315,6 +329,7 @@ apps/
 ```
 
 #### Content Management Interface
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🔧 Admin Panel > Content Management                        │
@@ -348,6 +363,7 @@ apps/
 ### Component Library Setup
 
 #### Shadcn/ui Components to Use:
+
 ```typescript
 // Core Components
 - Button, Input, Label, Textarea
@@ -372,6 +388,7 @@ apps/
 ```
 
 #### Custom Component Extensions:
+
 ```typescript
 // Custom components built on Shadcn/ui
 - RoadmapTimeline (custom visualization)
@@ -387,6 +404,7 @@ This design provides a clean, modern interface that's both functional and visual
 ### Backend Architecture (Bun.js + Hono)
 
 #### Project Structure
+
 ```
 backend/
 ├── src/
@@ -415,6 +433,7 @@ backend/
 ```
 
 #### API Endpoints Structure
+
 ```
 /api/v1/
 ├── /roadmaps
@@ -436,6 +455,7 @@ backend/
 ```
 
 #### Service Layer Architecture
+
 - **ContentService**: Manages questions, roadmaps, and learning materials using Drizzle ORM
 - **MockInterviewService**: Orchestrates interview sessions and AI feedback with external APIs
 - **AIService**: Interfaces with ChatGPT for question generation and code analysis
@@ -447,6 +467,7 @@ backend/
 ### Core Entities
 
 #### User Progress (Local Storage)
+
 ```typescript
 interface UserProgress {
   roadmapId: string;
@@ -458,6 +479,7 @@ interface UserProgress {
 ```
 
 #### Role and Roadmap Models
+
 ```typescript
 interface Role {
   id: string;
@@ -487,6 +509,7 @@ interface Topic {
 ```
 
 #### Question Bank Models
+
 ```typescript
 interface Question {
   id: string;
@@ -514,6 +537,7 @@ interface Solution {
 ```
 
 #### Mock Interview Models
+
 ```typescript
 interface MockInterview {
   id: string;
@@ -537,15 +561,25 @@ interface InterviewQuestion {
 ### Database Schema
 
 #### Database Schema (Drizzle ORM)
+
 ```typescript
 // schema.ts - Drizzle schema definitions
-import { pgTable, uuid, varchar, text, integer, jsonb, decimal, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  integer,
+  jsonb,
+  decimal,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 
 export const roles = pgTable('roles', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 100 }).notNull(),
   description: text('description'),
-  createdAt: timestamp('created_at').defaultNow()
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
 export const roadmaps = pgTable('roadmaps', {
@@ -555,7 +589,7 @@ export const roadmaps = pgTable('roadmaps', {
   title: varchar('title', { length: 200 }).notNull(),
   description: text('description'),
   estimatedHours: integer('estimated_hours'),
-  createdAt: timestamp('created_at').defaultNow()
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
 export const questions = pgTable('questions', {
@@ -567,25 +601,28 @@ export const questions = pgTable('questions', {
   solution: jsonb('solution'),
   metadata: jsonb('metadata'),
   rating: decimal('rating', { precision: 3, scale: 2 }).default('0'),
-  createdAt: timestamp('created_at').defaultNow()
+  createdAt: timestamp('created_at').defaultNow(),
 });
 ```
 
 ## Error Handling
 
 ### Frontend Error Handling
+
 - Global error boundary for React component errors
 - API error interceptors with user-friendly messages
 - Offline detection and graceful degradation
 - Form validation with real-time feedback
 
 ### Backend Error Handling
+
 - Centralized error handling middleware
 - Structured error responses with consistent format
 - Logging with different levels (error, warn, info, debug)
 - Rate limiting and DDoS protection
 
 ### Error Response Format
+
 ```typescript
 interface ErrorResponse {
   success: false;
@@ -601,12 +638,14 @@ interface ErrorResponse {
 ## MVP Development Strategy
 
 ### Development Approach
+
 - **Manual Testing**: Focus on rapid development with manual testing for each feature
 - **Iterative Development**: Build and test features incrementally
 - **Code Quality**: TypeScript and ESLint for code consistency
 - **Future Testing**: Automated testing to be added post-MVP
 
 ### CI/CD Pipeline (MVP)
+
 ```mermaid
 graph LR
     A[Code Push] --> B[GitHub Actions]
@@ -622,24 +661,25 @@ graph LR
 ## Infrastructure Design
 
 ### Deployment Architecture
+
 ```mermaid
 graph TB
     subgraph "Vercel (Frontend)"
         A[Client App - client.domain.com]
         B[Admin App - admin.domain.com]
     end
-    
+
     subgraph "Cloud Provider (Backend)"
         C[Docker Container - api.domain.com]
         D[PostgreSQL Database]
         E[Redis Cache]
     end
-    
+
     subgraph "External Services"
         F[ChatGPT API]
         G[CodeInterview/CoderPad]
     end
-    
+
     A --> C
     B --> C
     C --> D
@@ -651,6 +691,7 @@ graph TB
 ### Environment Configuration
 
 #### Frontend (Next.js Apps)
+
 ```typescript
 // Environment Variables
 NEXT_PUBLIC_API_URL=https://api.domain.com
@@ -659,6 +700,7 @@ NEXT_PUBLIC_ANALYTICS_ID=xxx
 ```
 
 #### Backend (Bun.js API)
+
 ```typescript
 // Environment Variables
 DATABASE_URL=postgresql://...
@@ -670,6 +712,7 @@ PORT=3001
 ```
 
 ### Docker Configuration
+
 ```dockerfile
 # Backend Dockerfile
 FROM oven/bun:1 as base
@@ -693,6 +736,7 @@ CMD ["bun", "run", "start"]
 ```
 
 ### Post-MVP Testing Strategy
+
 - **Frontend Tests**: Vitest + React Testing Library for Next.js components
 - **Backend Tests**: Bun's built-in test runner for API endpoints and services
 - **E2E Tests**: Playwright for critical user journeys across client and admin apps
@@ -701,18 +745,21 @@ CMD ["bun", "run", "start"]
 ## Security Considerations
 
 ### Data Protection
+
 - Input validation and sanitization for all user inputs
 - SQL injection prevention through parameterized queries
 - XSS protection with Content Security Policy headers
 - CORS configuration for API access control
 
 ### API Security
+
 - Rate limiting to prevent abuse
 - JWT tokens for admin authentication
 - API key management for external services
 - Request/response logging for audit trails
 
 ### Infrastructure Security
+
 - HTTPS enforcement with SSL certificates
 - Environment variable management for secrets
 - Regular security updates and dependency scanning
@@ -721,18 +768,21 @@ CMD ["bun", "run", "start"]
 ## Performance Optimization
 
 ### Frontend Performance
+
 - Code splitting and lazy loading for route-based chunks
 - Image optimization and lazy loading
 - Service worker for offline functionality
 - Bundle size monitoring and optimization
 
 ### Backend Performance
+
 - Redis caching for frequently accessed data
 - Database query optimization with proper indexing
 - Connection pooling for database connections
 - Response compression and CDN integration
 
 ### Caching Strategy
+
 - **Browser Cache**: Static assets with long-term caching
 - **Redis Cache**: API responses, user sessions, frequently accessed content
 - **Database Cache**: Query result caching for complex operations
@@ -741,12 +791,14 @@ CMD ["bun", "run", "start"]
 ## Monitoring and Analytics
 
 ### Application Monitoring
+
 - Error tracking and alerting
 - Performance monitoring for API endpoints
 - Database query performance analysis
 - User experience monitoring
 
 ### Business Metrics
+
 - User engagement and feature usage
 - Content quality metrics (ratings, completion rates)
 - Mock interview success rates
