@@ -104,7 +104,7 @@
   - Create topic detail views with resources and linked questions
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 13. Build question bank interface with search and filtering
+- [x] 13. Build question bank interface with search and filtering
   - Create question bank pages (app/questions) with search functionality
   - Implement searchable question list using Input, Select, and Command components
   - Build QuestionCard component with Badge, Button, and rating display
