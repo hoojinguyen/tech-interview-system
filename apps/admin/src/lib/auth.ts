@@ -68,11 +68,15 @@ class AuthService {
 
   // Check if token is expired
   isTokenExpired(token: string): boolean {
-    const decoded = this.decodeToken(token);
-    if (!decoded) return true;
+    try {
+      const decoded = jwtDecode<any>(token);
+      if (!decoded || !decoded.exp) return true;
 
-    const currentTime = Date.now() / 1000;
-    return decoded.exp < currentTime;
+      const currentTime = Date.now() / 1000;
+      return decoded.exp < currentTime;
+    } catch (error) {
+      return true;
+    }
   }
 
   // Get current user from token
@@ -80,48 +84,51 @@ class AuthService {
     const tokens = this.getTokens();
     if (!tokens) return null;
 
-    const decoded = this.decodeToken(tokens.accessToken);
-    if (!decoded) return null;
-
-    return {
-      id: decoded.sub,
-      name: decoded.name,
-      email: decoded.email,
-      role: decoded.role as 'admin' | 'moderator',
-    };
+    try {
+      const decoded = jwtDecode<any>(tokens.accessToken);
+      
+      return {
+        id: decoded.userId || decoded.sub,
+        name: decoded.name || 'Admin User',
+        email: decoded.email,
+        role: decoded.role as 'admin' | 'moderator',
+      };
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      return null;
+    }
   }
 
-  // Login with credentials
+  // Login with credentials (Demo implementation)
   async login(
     email: string,
     password: string
   ): Promise<{ user: User; tokens: AuthTokens }> {
-    const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/admin/auth/login`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    // Demo credentials for MVP
+    if (email === 'admin@example.com' && password === 'admin123') {
+      // Use the pre-generated admin token
+      const adminToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZG1pbi10ZXN0LWlkIiwicm9sZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkB0ZXN0LmNvbSIsImlhdCI6MTc1NTUzNDAzMywiZXhwIjoxNzU1NjIwNDMzLCJhdWQiOiJhZG1pbi1wYW5lbCIsImlzcyI6InRlY2gtaW50ZXJ2aWV3LXBsYXRmb3JtIn0.3x6p-z3kk40nxvYXg6MYYYIfpj4T6fdzBya2nTu4J-U';
+      
+      const tokens: AuthTokens = {
+        accessToken: adminToken,
+        refreshToken: 'demo-refresh-token',
+      };
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Login failed');
+      // Store the admin token for API calls
+      localStorage.setItem('admin_token', adminToken);
+      this.setTokens(tokens);
+
+      const user: User = {
+        id: 'admin-test-id',
+        name: 'Admin User',
+        email: 'admin@example.com',
+        role: 'admin',
+      };
+
+      return { user, tokens };
+    } else {
+      throw new Error('Invalid credentials. Use admin@example.com / admin123');
     }
-
-    const data = await response.json();
-    const tokens: AuthTokens = {
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-    };
-
-    this.setTokens(tokens);
-    const user = this.getCurrentUser()!;
-
-    return { user, tokens };
   }
 
   // Refresh access token

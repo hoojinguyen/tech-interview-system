@@ -44,9 +44,14 @@ const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   checkAuth: () => {
-    const isAuthenticated = authService.isAuthenticated()
-    const user = isAuthenticated ? authService.getCurrentUser() : null
-    set({ user, isAuthenticated })
+    try {
+      const isAuthenticated = authService.isAuthenticated()
+      const user = isAuthenticated ? authService.getCurrentUser() : null
+      set({ user, isAuthenticated })
+    } catch (error) {
+      console.error('Auth check error:', error)
+      set({ user: null, isAuthenticated: false })
+    }
   },
 
   refreshToken: async () => {

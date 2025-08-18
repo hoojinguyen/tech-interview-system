@@ -1,19 +1,17 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useAuth } from '@/hooks/use-auth'
+import { authService } from '@/lib/auth'
 
 interface AuthProviderProps {
   children: React.ReactNode
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { checkAuth } = useAuth()
-
   useEffect(() => {
-    // Check authentication status on app load
-    checkAuth()
-  }, [checkAuth])
+    // Initialize auth state on app load
+    // This will be handled by individual components using useAuth
+  }, [])
 
   return <>{children}</>
 }
