@@ -46,3 +46,4 @@ export {
   DialogDescription,
 } from './dialog'
 export { Popover, PopoverTrigger, PopoverContent } from './popover'
+export { ScrollArea, ScrollBar } from './scroll-area'

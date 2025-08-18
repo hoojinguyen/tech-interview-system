@@ -113,7 +113,7 @@
   - Implement pagination and infinite scroll for question results
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 14. Create mock interview interface with coding environment
+- [x] 14. Create mock interview interface with coding environment
   - Build mock interview setup page (app/mock-interviews) with role/level selection
   - Implement interview session page with split-screen layout
   - Create question panel component with problem description and examples

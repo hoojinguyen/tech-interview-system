@@ -112,3 +112,6 @@ export const DIFFICULTY_COLORS = {
   mid: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   senior: 'bg-red-100 text-red-800 border-red-200',
 } as const
+
+// Alias for backward compatibility
+export const ROLES = TECH_ROLES

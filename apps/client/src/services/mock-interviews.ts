@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api, handleApiResponse, handleApiError } from '@/lib/api'
 import type { 
   MockInterview, 
+  MockInterviewWithDetails,
   StartMockInterviewRequest, 
   SubmitAnswerRequest,
   SubmitAnswerResponse,
@@ -21,7 +22,7 @@ export const mockInterviewApi = {
   },
 
   // Submit an answer for a question
-  async submitAnswer(interviewId: string, answerData: SubmitAnswerRequest): Promise<void> {
+  async submitAnswer(interviewId: string, answerData: SubmitAnswerRequest): Promise<SubmitAnswerResponse['data']> {
     try {
       const response = await api.post(`/api/v1/mock-interviews/${interviewId}/submit`, answerData)
       return handleApiResponse(response)
@@ -41,7 +42,7 @@ export const mockInterviewApi = {
   },
 
   // Get mock interview session details
-  async getMockInterview(interviewId: string): Promise<MockInterview> {
+  async getMockInterview(interviewId: string): Promise<MockInterviewWithDetails> {
     try {
       const response = await api.get(`/api/v1/mock-interviews/${interviewId}`)
       return handleApiResponse(response)
