@@ -1,14 +1,30 @@
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/use-auth'
+import { Skeleton } from '@/components/ui/skeleton'
+
 export default function AdminHome() {
+  const router = useRouter()
+  const { isAuthenticated, isLoading } = useAuth()
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isAuthenticated) {
+        router.push('/admin')
+      } else {
+        router.push('/admin/login')
+      }
+    }
+  }, [isAuthenticated, isLoading, router])
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <h1 className="text-4xl font-bold text-center">
-          Admin Panel
-        </h1>
-        <p className="text-xl text-center mt-4">
-          Tech Interview Platform Administration
-        </p>
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center space-y-4">
+        <Skeleton className="h-8 w-48 mx-auto" />
+        <Skeleton className="h-4 w-32 mx-auto" />
       </div>
-    </main>
+    </div>
   )
 }
